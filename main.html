@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BoBoLo Bot - Tables</title>
+    <style>
+		@font-face {
+			font-family: Koulen-Regular;
+			src: url('./Koulen-Regular.ttf');
+		}
+		html,
+body {
+	height: 100%;
+}
+
+body {
+	margin: 0;
+	background: linear-gradient(45deg, #49a09d, #5f2c82);
+	font-family: Koulen-Regular, sans-serif;
+	letter-spacing: 3px;
+	font-weight: 100;
+}
+
+.container {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+table {
+	width: 800px;
+	border-collapse: collapse;
+	overflow: hidden;
+	box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+}
+
+th,
+td {
+	text-align: center;
+	padding: 15px;
+	background-color: rgba(255, 255, 255, 0.2);
+	color: #fff;
+}
+
+th {
+	text-align: center;
+}
+
+thead th {
+	background-color: #55608f;
+}
+
+tbody tr:hover {
+	background-color: rgba(255, 255, 255, 0.3);
+}
+
+tbody td {
+	position: relative;
+}
+
+tbody td:hover:before {
+	content: "";
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: -9999px;
+	bottom: -9999px;
+	background-color: rgba(255, 255, 255, 0.2);
+	z-index: -1;
+}
+#rectangleGreen{
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+    width:40px;
+    height:25px;
+    background:green;
+	border-radius: 120px;
+}
+#rectangleRed{
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+    width:40px;
+    height:25px;
+    background:red;
+	border-radius: 120px;
+}
+.title{
+	position: absolute;
+	top: 15%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+    </style>
+</head>
+    <script>
+        const cmdUrl = 'https://bobolo-bot.herokuapp.com/cmds/';
+        var data;
+		var old = "";
+		getCmds();
+		setInterval(getCmds, 5000);
+        
+        async function getCmds() {
+            const response = await fetch(cmdUrl);
+            data = await response.json();
+            if (old != data) loadCmdTable(data);
+			old = data;
+        }
+
+        
+        function loadCmdTable(data){
+            const tableBody = document.getElementById('cmdTable');
+            let dataHtml = '<thead><tr><th>Name</th><th>Response</th><th>ON/OFF</th></tr></thead>';
+            let first = true;
+            for (let cmd of data){
+                if (!first) {
+					if (cmd.work == "yes"){
+						dataHtml += `<tr><td>${cmd.name}</td><td>${cmd.answer}</td><td><div id="rectangleGreen"></div></td></tr>`;
+					}
+					else {
+						dataHtml += `<tr><td>${cmd.name}</td><td>${cmd.answer}</td><td><div id="rectangleRed"></div></td></tr>`;
+					}
+				}
+                   
+                else 
+                    first = false;
+            }
+            tableBody.innerHTML = dataHtml;
+        }
+    </script>
+	<h1 class="title">Command List</h1>
+	<div class="container">
+    <table id="cmdTable"></table> 
+</div>
+</body>
+</html>
